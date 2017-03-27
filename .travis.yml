@@ -61,7 +61,7 @@ before_script:
   #
 script:
   #
-  # Backup Configuration.h, Configuration_adv.h, and pins_RAMPS.h
+  # Backup Configuration.h, Configuration_adv.h, and pins_ROBOC2.h
   #
   - cp Marlin/Configuration.h Marlin/Configuration.h.backup
   - cp Marlin/Configuration_adv.h Marlin/Configuration_adv.h.backup
@@ -76,7 +76,7 @@ script:
   - opt_set TEMP_SENSOR_BED 1
   - build_marlin
   #
-  # Test 2 extruders on basic RAMPS 1.4
+  # Test 2 extruders on ROBO C2 Mainboard (v2.1.4)
   #
   #- opt_set MOTHERBOARD BOARD_ROBOC2
   #- opt_set EXTRUDERS 2
