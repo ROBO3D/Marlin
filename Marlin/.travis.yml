@@ -73,7 +73,7 @@ script:
   #
   # Test heated bed temperature sensor
   #
-  - opt_set TEMP_SENSOR_BED 1
+  - opt_set TEMP_SENSOR_BED 0
   - build_marlin
   #
   # Test 2 extruders on ROBO C2 Mainboard (v2.1.4)
@@ -81,7 +81,6 @@ script:
   - opt_set MOTHERBOARD BOARD_ROBOC2
   - opt_set EXTRUDERS 2
   - opt_set TEMP_SENSOR_1 1
-  - opt_set TEMP_SENSOR_BED 0
   - build_marlin
   #
   #
@@ -105,12 +104,6 @@ script:
   - opt_set ABL_GRID_POINTS_Y 4
   - build_marlin
   #
-  # Test a Sled Z Probe
-  #
-  - restore_configs
-  - opt_enable Z_PROBE_SLED
-  - build_marlin
-  #
   # ...with AUTO_BED_LEVELING_LINEAR, DEBUG_LEVELING_FEATURE, EEPROM_SETTINGS, and EEPROM_CHITCHAT
   #
   - opt_enable AUTO_BED_LEVELING_LINEAR DEBUG_LEVELING_FEATURE EEPROM_SETTINGS EEPROM_CHITCHAT
@@ -128,16 +121,11 @@ script:
   #   INCH_MODE_SUPPORT, TEMPERATURE_UNITS_SUPPORT
   #
   - restore_configs
-  - opt_enable EEPROM_SETTINGS EEPROM_CHITCHAT M100_FREE_MEMORY_WATCHER INCH_MODE_SUPPORT TEMPERATURE_UNITS_SUPPORT
+  - opt_enable EEPROM_SETTINGS EEPROM_CHITCHAT M100_FREE_MEMORY_WATCHER INCH_MODE_SUPPORT
   - build_marlin
   #
   #
   #
-  # Enable filament sensor
-  #
-  - restore_configs
-  - opt_enable FILAMENT_WIDTH_SENSOR
-  - build_marlin
 
   #
   # Test PRINTCOUNTER
