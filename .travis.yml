@@ -78,10 +78,10 @@ script:
   #
   # Test 2 extruders on ROBO C2 Mainboard (v2.1.4)
   #
-  #- opt_set MOTHERBOARD BOARD_ROBOC2
-  #- opt_set EXTRUDERS 2
-  #- opt_set TEMP_SENSOR_1 1
-  #- build_marlin
+  - opt_set MOTHERBOARD BOARD_ROBOC2
+  - opt_set EXTRUDERS 2
+  - opt_set TEMP_SENSOR_1 1
+  - build_marlin
   #
   #
   # Test PIDTEMPBED
@@ -91,10 +91,10 @@ script:
   #- build_marlin
   #
   #
-  # Test a "Fix Mounted" Probe along with Safe Homing
+  # Test a "Fix Mounted" Probe 
   #
   - restore_configs
-  - opt_enable FIX_MOUNTED_PROBE Z_SAFE_HOMING
+  - opt_enable FIX_MOUNTED_PROBE
   - build_marlin
   #
   # ...with AUTO_BED_LEVELING_LINEAR, Z_MIN_PROBE_REPEATABILITY_TEST, and DEBUG_LEVELING_FEATURE
