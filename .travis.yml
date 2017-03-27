@@ -81,6 +81,7 @@ script:
   - opt_set MOTHERBOARD BOARD_ROBOC2
   - opt_set EXTRUDERS 2
   - opt_set TEMP_SENSOR_1 1
+  - opt_set TEMP_SENSOR_BED 0
   - build_marlin
   #
   #
@@ -91,7 +92,7 @@ script:
   #- build_marlin
   #
   #
-  # Test a "Fix Mounted" Probe 
+  # Test a "Fix Mounted" Probe
   #
   - restore_configs
   - opt_enable FIX_MOUNTED_PROBE
