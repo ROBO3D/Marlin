@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Robo3D/Marlin.svg?branch=master)](https://travis-ci.org/Robo3D/Marlin)
+[![Build Status](https://travis-ci.org/Robo3D/Marlin.svg?branch=C2-dev)](https://travis-ci.org/Robo3D/Marlin)
 
 # Marlin 3D Printer Firmware for Robo C2
 
