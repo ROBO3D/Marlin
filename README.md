@@ -1,4 +1,6 @@
-# Marlin 3D Printer Firmware
+https://travis-ci.org/Robo3D/Marlin.svg?branch=master
+
+# Marlin 3D Printer Firmware for Robo C2
 
 <img align="top" width=175 src="buildroot/share/pixmaps/logo/marlin-250.png" />
 
@@ -13,11 +15,10 @@ G90
 G92 E0
 M106 S0
 G28
-M420 S1 Z3
 G29
 G1 X1 Y1 F7200
 M109 S210
-G1 Z0.15
+G1 Z0.3
 G1 X100 E15.0 F500
 G1 Z5 F300
 G92 E0
