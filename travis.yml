@@ -1,0 +1,160 @@
+---
+language: c
+  #
+notifications:
+  email: false
+  #
+before_install:
+  #
+  # Fetch the tag information for the current branch
+  - git fetch origin --tags
+  #
+  # Publish the buildroot script folder
+  - chmod +x ${TRAVIS_BUILD_DIR}/buildroot/bin/*
+  - ln -s ${TRAVIS_BUILD_DIR}/buildroot/bin/ ~/bin
+  #
+  # Start fb X server
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
+  - sleep 3
+  - export DISPLAY=:1.0
+  #
+install:
+  #
+  # Install arduino 1.6.10
+  - wget http://downloads-02.arduino.cc/arduino-1.6.10-linux64.tar.xz
+  - tar xf arduino-1.6.10-linux64.tar.xz
+  - sudo mv arduino-1.6.10 /usr/local/share/arduino
+  - ln -s /usr/local/share/arduino/arduino ${TRAVIS_BUILD_DIR}/buildroot/bin/arduino
+  #
+  # Install: LiquidCrystal_I2C library
+  - git clone https://github.com/kiyoshigawa/LiquidCrystal_I2C.git
+  - mv LiquidCrystal_I2C/LiquidCrystal_I2C /usr/local/share/arduino/libraries/LiquidCrystal_I2C
+  #
+  # Install: LiquidTWI2 library
+  - git clone https://github.com/lincomatic/LiquidTWI2.git
+  - sudo mv LiquidTWI2 /usr/local/share/arduino/libraries/LiquidTWI2
+  #
+  # Install: Monochrome Graphics Library for LCDs and OLEDs
+  - git clone https://github.com/olikraus/U8glib_Arduino.git
+  - sudo mv U8glib_Arduino /usr/local/share/arduino/libraries/U8glib
+  #
+  # Install: L6470 Stepper Motor Driver library
+  # - git clone https://github.com/ameyer/Arduino-L6470.git
+  # - sudo mv Arduino-L6470/L6470 /usr/local/share/arduino/libraries/L6470
+  #
+  # Install: TMC26X Stepper Motor Controller library
+  # - git clone https://github.com/trinamic/TMC26XStepper.git
+  # - sudo mv TMC26XStepper /usr/local/share/arduino/libraries/TMC26XStepper
+  #
+  # Install: TMC2130 Stepper Motor Controller library
+  - git clone https://github.com/MarlinFirmware/Trinamic_TMC2130.git
+  - sudo mv Trinamic_TMC2130/Trinamic_TMC2130 /usr/local/share/arduino/libraries/Trinamic_TMC2130
+  #
+before_script:
+  #
+  # Change current working directory to the build dir
+  - cd ${TRAVIS_BUILD_DIR}
+  #
+  # Generate custom version include
+  - generate_version_header_for_marlin ${TRAVIS_BUILD_DIR}/Marlin
+  - cat ${TRAVIS_BUILD_DIR}/Marlin/_Version.h
+  #
+script:
+  #
+  # Backup Configuration.h, Configuration_adv.h, and pins_RAMPS.h
+  #
+  - cp Marlin/Configuration.h Marlin/Configuration.h.backup
+  - cp Marlin/Configuration_adv.h Marlin/Configuration_adv.h.backup
+  - cp Marlin/pins_ROBOC2.h Marlin/pins_ROBOC2.h.backup
+  #
+  # Build with the default configurations
+  #
+  - build_marlin
+  #
+  # Test heated bed temperature sensor
+  #
+  - opt_set TEMP_SENSOR_BED 1
+  - build_marlin
+  #
+  # Test 2 extruders on basic RAMPS 1.4
+  #
+  #- opt_set MOTHERBOARD BOARD_ROBOC2
+  #- opt_set EXTRUDERS 2
+  #- opt_set TEMP_SENSOR_1 1
+  #- build_marlin
+  #
+  #
+  # Test PIDTEMPBED
+  #
+  #- restore_configs
+  #- opt_enable PIDTEMPBED
+  #- build_marlin
+  #
+  #
+  # Test a "Fix Mounted" Probe along with Safe Homing
+  #
+  - restore_configs
+  - opt_enable FIX_MOUNTED_PROBE Z_SAFE_HOMING
+  - build_marlin
+  #
+  # ...with AUTO_BED_LEVELING_LINEAR, Z_MIN_PROBE_REPEATABILITY_TEST, and DEBUG_LEVELING_FEATURE
+  #
+  - opt_enable AUTO_BED_LEVELING_LINEAR Z_MIN_PROBE_REPEATABILITY_TEST DEBUG_LEVELING_FEATURE
+  - opt_set ABL_GRID_POINTS_X 4
+  - opt_set ABL_GRID_POINTS_Y 4
+  - build_marlin
+  #
+  # Test a Sled Z Probe
+  #
+  - restore_configs
+  - opt_enable Z_PROBE_SLED
+  - build_marlin
+  #
+  # ...with AUTO_BED_LEVELING_LINEAR, DEBUG_LEVELING_FEATURE, EEPROM_SETTINGS, and EEPROM_CHITCHAT
+  #
+  - opt_enable AUTO_BED_LEVELING_LINEAR DEBUG_LEVELING_FEATURE EEPROM_SETTINGS EEPROM_CHITCHAT
+  - build_marlin
+  #
+  #
+  # ...with AUTO_BED_LEVELING_3POINT, DEBUG_LEVELING_FEATURE, EEPROM_SETTINGS, EEPROM_CHITCHAT, EXTENDED_CAPABILITIES_REPORT, and AUTO_REPORT_TEMPERATURES
+  #
+  - opt_enable AUTO_BED_LEVELING_3POINT DEBUG_LEVELING_FEATURE EEPROM_SETTINGS EEPROM_CHITCHAT
+  - opt_enable_adv EXTENDED_CAPABILITIES_REPORT AUTO_REPORT_TEMPERATURES
+  - build_marlin
+  #
+  #
+  # Test EEPROM_SETTINGS, EEPROM_CHITCHAT, M100_FREE_MEMORY_WATCHER,
+  #   INCH_MODE_SUPPORT, TEMPERATURE_UNITS_SUPPORT
+  #
+  - restore_configs
+  - opt_enable EEPROM_SETTINGS EEPROM_CHITCHAT M100_FREE_MEMORY_WATCHER INCH_MODE_SUPPORT TEMPERATURE_UNITS_SUPPORT
+  - build_marlin
+  #
+  #
+  #
+  # Enable filament sensor
+  #
+  - restore_configs
+  - opt_enable FILAMENT_WIDTH_SENSOR
+  - build_marlin
+
+  #
+  # Test PRINTCOUNTER
+  #
+  - restore_configs
+  - opt_enable PRINTCOUNTER
+  - build_marlin
+  #
+  # Test NOZZLE_PARK_FEATURE
+  #
+  - restore_configs
+  - opt_enable NOZZLE_PARK_FEATURE
+  - build_marlin
+  #
+  # Test NOZZLE_CLEAN_FEATURE
+  #
+  - restore_configs
+  - opt_enable NOZZLE_CLEAN_FEATURE
+  - build_marlin
+  #
+  #
